@@ -1,4 +1,4 @@
-name: Build Tweak
+: Build Tweak
 
 on:
   push:
