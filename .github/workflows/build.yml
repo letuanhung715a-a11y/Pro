@@ -1,35 +1,32 @@
-: Build Tweak
-
+name: Build Tweak
 on:
   push:
-    branches: [main, master]
+    branches: [main]
   workflow_dispatch:
-
 jobs:
   build:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Unzip source
-        run: unzip "Fake MigulV2.zip" -d .
-
-      - name: Install Theos
+      - name: Unzip
+        run: unzip "Fake MigulV2.zip" -d out
+      - name: Theos
         run: |
           git clone --recursive https://github.com/theos/theos.git $HOME/theos
           echo "THEOS=$HOME/theos" >> $GITHUB_ENV
           echo "$HOME/theos/bin" >> $GITHUB_PATH
-
-      - name: Install ldid
+      - name: SDK
+        run: |
+          curl -L https://github.com/theos/sdks/archive/master.tar.gz | tar -xz
+          mv sdks-master/*.sdk $HOME/theos/sdks/
+      - name: ldid
         run: brew install ldid
-
       - name: Build
         run: |
-          cd Wwww-main-master
+          cd out/Wwww-main-master
           make clean && make package
-
-      - name: Upload artifact
+      - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: tweak-deb
-          path: Wwww-main-master/packages/*.deb
+          name: tweak
+          path: out/Wwww-main-master/packages/*.deb
