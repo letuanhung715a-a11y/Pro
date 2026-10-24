@@ -11,6 +11,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Unzip source
+        run: unzip "Fake MigulV2.zip" -d .
+
       - name: Install Theos
         run: |
           git clone --recursive https://github.com/theos/theos.git $HOME/theos
@@ -21,10 +24,12 @@ jobs:
         run: brew install ldid
 
       - name: Build
-        run: make clean && make package
+        run: |
+          cd Wwww-main-master
+          make clean && make package
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: tweak-deb
-          path: packages/*.deb
+          path: Wwww-main-master/packages/*.deb
